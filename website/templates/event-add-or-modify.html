@@ -1,0 +1,399 @@
+{% extends "base.html" %} {% block content %} {% if error %}
+<div class="px-4 py-2 space-x-8 inline-block">
+  <div class="bg-red-100 text-red-700 rounded-lg p-4">{{error}}</div>
+</div>
+{% endif %}
+
+<div
+  class="flex justify-start space-x-8 px-4 sm:flex-row sm:space-x-8 sm:space-y-0"
+>
+  <form
+    id="event-form"
+    method="post"
+    action="{{ '/events/' + datetime if datetime else '/events' }}"
+    class="space-y-4"
+    enctype="multipart/form-data"
+  >
+    <div class="-full">
+      <label for="title" class="block text-white font-bold">titre</label>
+      <input
+        type="text"
+        id="title"
+        name="title"
+        value="{{ title if title else '' }}"
+        required
+        class="mt-1 block w-full rounded-md border-gray-500 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-2 min-h-[40px] min-w-[30px] bg-white"
+      />
+    </div>
+
+    <div
+      class="flex flex-col space-y-4 sm:flex-row sm:space-x-2 sm:space-y-0 w-full text-white"
+    >
+      <div class="w-[280px]">
+        <label for="type1" class="block text-white font-bold">type 1</label>
+        <select
+          id="type1"
+          name="type1"
+          required
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-2 text-black min-h-[40px] bg-white"
+        >
+          <option value="" selected>aucun</option>
+          {% for type in event_types %}
+          <option
+            value="{{type}}"
+            {% if type1 and type == type1 %}
+            selected
+            {% endif %}
+          >
+            {{type}}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="w-[280px]">
+        <label for="type2" class="block text-white font-bold"
+          >type 2 (optionnel)</label
+        >
+        <select
+          id="type2"
+          name="type2"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-2 text-black min-h-[40px] bg-white"
+        >
+          <option value="">aucun</option>
+          {% for type in event_types %}
+          <option
+            value="{{type}}"
+            {% if type2 and type == type2 %}
+            selected
+            {% endif %}
+          >
+            {{type}}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div class="w-full">
+        <label for="type3" class="block text-white font-bold"
+          >type 3 (optionnel)</label
+        >
+        <input
+          type="type3"
+          id="type3"
+          name="type3"
+          value="{{ type3 if type3 else '' }}"
+          class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-2 min-h-[40px] text-black bg-white"
+        />
+      </div>
+    </div>
+
+    <div
+      class="flex flex-col justify-start space-x-2 w-full text-white sm:flex-row sm:space-y-0"
+    >
+      <div>
+        <label for="date" class="block text-white font-bold">date</label>
+        <input
+          type="date"
+          id="date"
+          name="date"
+          value="{{ date if date else '' }}"
+          required
+          class="mt-1 block w-full rounded-md border-gray-300 text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-2 min-h-[40px] bg-white"
+        />
+      </div>
+
+      <div>
+        <label for="time" class="block text-white font-bold">portes</label>
+        <input
+          type="time"
+          id="time_doors"
+          name="time_doors"
+          value="{{ time_doors if time_doors else '19:00' }}"
+          required
+          class="mt-1 block w-full rounded-md border-gray-300 text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-2 min-h-[40px] bg-white"
+        />
+      </div>
+
+      <div>
+        <label for="time" class="block text-white font-bold">début</label>
+        <input
+          type="time"
+          id="time_start"
+          name="time_start"
+          value="{{ time_start if time_start else '20:00' }}"
+          required
+          class="mt-1 block w-full rounded-md border-gray-300 text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-2 min-h-[40px] bg-white"
+        />
+      </div>
+
+      <div>
+        <label for="age" class="block text-white font-bold">âge</label>
+        <input
+          type="number"
+          id="age"
+          name="age"
+          value="{{ age if age else 16 }}"
+          required
+          min="0"
+          max="120"
+          step="1"
+          class="mt-1 block w-full rounded-md border-gray-300 text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-2 min-h-[40px] bg-white"
+        />
+      </div>
+
+      <div>
+        <label for="price" class="block text-white font-bold">prix</label>
+        <input
+          type="text"
+          id="price"
+          name="price"
+          value="{{ price if price else 'prix libre' }}"
+          required
+          class="mt-1 block w-full rounded-md border-gray-300 text-black shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-2 min-h-[40px] bg-white"
+        />
+      </div>
+    </div>
+
+    <div>
+      <label for="trigger_warning" class="block text-white font-bold"
+        >trigger warning</label
+      >
+      <div
+        x-data="{ trigger_warnings: {{ trigger_warnings | safe if trigger_warnings else '[]' }}, newTag: '' }"
+        class="w-full"
+      >
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+          <template x-for="(tag, index) in trigger_warnings" :key="index">
+            <span
+              class="bg-blue-200 text-blue-700 py-1 px-3 rounded-full text-sm flex items-center"
+            >
+              <span x-text="tag"></span>
+              <button
+                @click.stop.prevent="trigger_warnings.splice(index, 1)"
+                class="ml-2 text-red-500 hover:text-red-700"
+              >
+                &times;
+              </button>
+            </span>
+          </template>
+
+          <input
+            type="text"
+            x-model="newTag"
+            @keydown.enter.prevent="if (newTag.trim() !== '') { trigger_warnings.push(newTag); newTag = ''; }"
+            class="border p-2 rounded text-gray-700 w-full focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+            placeholder="Ajoutez un trigger warning..."
+          />
+
+          <template x-for="(tag, index) in trigger_warnings" :key="index">
+            <input type="hidden" name="trigger_warnings" :value="tag" />
+          </template>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label for="description" class="block text-white font-bold"
+        >description</label
+      >
+      <div
+        id="editor"
+        class="mt-1 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus-within:ring-1 focus-within:ring-indigo-500 min-h-[150px]"
+      ></div>
+      <input
+        type="hidden"
+        id="description"
+        name="description"
+        value="{{ description if description else ''}}"
+      />
+    </div>
+
+    {% if reminder_date %}
+    <div class="flex flex-col text-white font-bold">
+      <div class="block mb-2">Une publication a été programmée pour le {{ reminder_date }} </div>
+      <div class="flex items-center">
+        <input
+          type="checkbox"
+          id="telegram-post-cancel"
+          name="telegram_post_cancel"
+          class="mr-2"
+        />
+        <label for="telegram-post-cancel" class="block">Annuler la publication telegram</label>
+      </div>
+    </div>
+    {% endif %}
+
+    <div class="flex items-center">
+      <input
+        type="checkbox"
+        id="telegram-post"
+        name="telegram_post"
+        class="mr-2"
+        {%
+        if
+        telegram_post
+        %}checked{%
+        endif
+        %}
+      />
+      <label for="telegram-post" class="block text-white font-bold"
+        >{{ 'Modifier la publication' if reminder_date else 'Publier sur' }}
+        telegram</label
+      >
+    </div>
+
+    <div id="telegram-post-container" class="hidden">
+      <div class="flex flex-col sm:flex-row sm:space-x-8 sm:space-y-0">
+        <div>
+          <label for="telegram_image" class="block text-white font-bold"
+            >Ajouter une affiche</label
+          >
+          <input
+            type="file"
+            id="telegram_image"
+            name="telegram_image"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-2 min-h-[40px] text-black bg-white"
+          />
+        </div>
+
+        <div>
+          <label for="telegram_reminder_date" class="block text-white font-bold"
+            >Quand poster</label
+          >
+          <select
+            id="telegram_when_publish"
+            name="telegram_when_publish"
+            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 px-2 text-black bg-white min-h-[40px]"
+          >
+            {% for when in telegram_when_publish %}
+            <option value="{{when}}">{{when}}</option>
+            {% endfor %}
+          </select>
+        </div>
+
+    <div class="flex items-center">
+      <input
+        type="checkbox"
+        id="telegram_add_second_reminder"
+        name="telegram_add_second_reminder"
+        class="mr-2"
+        {%
+        if
+        telegram_add_second_reminder
+        %}checked{%
+        endif
+        %}
+      />
+      <label for="telegram_add_second_reminder" class="block text-white font-bold"
+        > Ajoutez un rappel le jour de l'événement</label
+      >
+    </div>
+    </div>
+    </div>
+
+
+    <button
+      type="submit"
+      class="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+    >
+      {{ "Mettre à jour l'événement" if title else "Ajoutez l'événement" }}
+    </button>
+  </form>
+</div>
+
+<script>
+  function imageHandler() {
+    const input = document.createElement("input");
+    input.setAttribute("type", "file");
+    input.setAttribute("accept", "image/*");
+    input.click();
+
+    input.onchange = () => {
+      const file = input.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          const base64Image = e.target.result;
+
+          // Resize the image (use a canvas)
+          const img = new Image();
+          img.src = base64Image;
+          img.onload = () => {
+            const canvas = document.createElement("canvas");
+            const ctx = canvas.getContext("2d");
+
+            const MAX_WIDTH = 800;
+            const MAX_HEIGHT = 800;
+
+            let width = img.width;
+            let height = img.height;
+
+            if (width > MAX_WIDTH || height > MAX_HEIGHT) {
+              if (width > height) {
+                height *= MAX_WIDTH / width;
+                width = MAX_WIDTH;
+              } else {
+                width *= MAX_HEIGHT / height;
+                height = MAX_HEIGHT;
+              }
+            }
+
+            canvas.width = width;
+            canvas.height = height;
+            ctx.drawImage(img, 0, 0, width, height);
+
+            // Convert canvas back to base64
+            const resizedImage = canvas.toDataURL("image/jpeg", 0.7);
+
+            const range = editor.getSelection();
+            editor.insertEmbed(range.index, "image", resizedImage);
+          };
+        };
+        reader.readAsDataURL(file);
+      }
+    };
+  }
+
+  var editor = new Quill("#editor", {
+    theme: "snow",
+    modules: {
+      toolbar: {
+        container: [
+          ["bold", "italic", "underline"],
+          ["link", "image"],
+          [{ list: "bullet" }],
+        ],
+        handlers: {
+          image: imageHandler,
+        },
+      },
+    },
+  });
+  editor.root.innerHTML = document.getElementById("description").value;
+  const form = document.querySelector("#event-form");
+  form.addEventListener("submit", function () {
+    document.querySelector("#description").value = editor.root.innerHTML;
+  });
+
+  const telegramPostCheckbox = document.getElementById("telegram-post");
+  const telegramPostContainer = document.getElementById(
+    "telegram-post-container",
+  );
+
+  function toggleTelegramPostContainer() {
+    if (telegramPostCheckbox.checked) {
+      telegramPostContainer.classList.remove("hidden");
+    } else {
+      telegramPostContainer.classList.add("hidden");
+    }
+  }
+
+  // Run on page load
+  toggleTelegramPostContainer();
+
+  // Run on change
+  telegramPostCheckbox.addEventListener("change", toggleTelegramPostContainer);
+</script>
+
+{% endblock %}

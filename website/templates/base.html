@@ -1,0 +1,352 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" type="image/x-icon" href="/assets/favicon.ico" />
+    <script src="/assets/js/htmx.min.js"></script>
+    <script src="/assets/js/alpine.min.js" defer></script>
+    <script src="/assets/js/quill.min.js"></script>
+    <link href="/assets/css/quill.snow.css" rel="stylesheet" />
+    <link href="/assets/css/tailwind.css" rel="stylesheet" />
+    <script
+      async
+      defer
+      data-website-id="9730cb9b-4bba-4218-a66a-23aa0022a517"
+      src="https://analytics.oblo.ch/script.js"
+    ></script>
+    <title>Cinéma Oblò</title>
+    <style>
+      html {
+        height: -webkit-fill-available;
+        background-color: #ff6501; /* fallback color */
+      }
+
+      body {
+        font-family: "Open Sans", serif;
+        min-height: 100vh;
+        min-height: -webkit-fill-available;
+        margin: 0;
+        padding: 0;
+        background-image: url("/assets/images/background-desktop.avif");
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        background-attachment: fixed;
+      }
+
+      /* Header styles explicitly */
+      header {
+        background-image: url("/assets/images/background-desktop.avif");
+        background-repeat: no-repeat;
+        background-position: center center;
+        background-size: cover;
+        background-attachment: fixed;
+      }
+
+      /* Mobile adjustments */
+      @media (max-width: 768px) {
+        body {
+          background-image: url("/assets/images/background-mobile.avif");
+          background-attachment: scroll;
+          background-size: cover;
+          background-position: center center;
+        }
+
+        header {
+          background-image: url("/assets/images/background-mobile.avif");
+          background-attachment: scroll;
+          background-size: cover;
+          background-position: center center;
+        }
+      }
+
+      /* Fallback for AVIF unsupported */
+      @supports not (
+        background-image: url("/assets/images/background-desktop.avif")
+      ) {
+        body,
+        header {
+          background-image: none;
+          background-color: #ff6501;
+        }
+      }
+
+      .font-custom {
+        font-family: "Ramona", sans-serif;
+        letter-spacing: 2px;
+        text-rendering: optimizeLegibility;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+      }
+
+      @font-face {
+        font-family: "Ramona";
+        src:
+          url("/assets/fonts/Ramona-Light.woff2") format("woff2"),
+          url("/assets/fonts/Ramona-Light.woff") format("woff");
+      }
+    </style>
+  </head>
+
+  <header
+    class="sticky top-0 z-50 px-5 text-white max-w-7xl mx-auto flex items-center justify-between font-custom relative"
+    x-data="{ burgerOpen: false, openDropdown: false }"
+  >
+    <div class="flex items-center">
+      <a href="/" class="flex items-center">
+        <picture>
+          <source srcset="/assets/images/logo.avif" type="image/avif" />
+          <img src="/assets/images/logo.jpg" alt="OBLÒ" class="h-20 w-auto" />
+        </picture>
+      </a>
+      <a href="/" class="px-4 py-6 mt-3 text-4xl">OBLÒ</a>
+    </div>
+
+    <!-- Nav + Burger -->
+    <div class="flex items-center text-2xl">
+      <!-- Burger Button -->
+      <button
+        @click.stop="burgerOpen = !burgerOpen"
+        @click.away="burgerOpen = false; openDropdown = false"
+        id="burger-button"
+        class="lg:hidden p-2 hover:text-white focus:outline-none"
+        aria-label="Toggle Navigation"
+      >
+        <svg
+          x-show="!burgerOpen"
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M4 6h16M4 12h16M4 18h16"
+          />
+        </svg>
+        <svg
+          x-show="burgerOpen"
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-6 w-6"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+        >
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M6 18L18 6M6 6l12 12"
+          />
+        </svg>
+      </button>
+      <!-- Navigation -->
+      <nav
+        id="mobile-menu"
+        x-transition
+        :class="{'flex': burgerOpen, 'hidden': !burgerOpen}"
+        class="absolute right-0 top-full mr-4 bg-[#FF6501] rounded p-4 flex-col space-y-2 shadow-lg lg:static lg:mt-0 lg:mr-0 lg:bg-transparent lg:p-0 lg:flex-row lg:space-y-0 lg:shadow-none hidden lg:flex"
+        aria-label="Main Navigation"
+      >
+        <!-- Primary Links -->
+        <a href="/" class="hover:text-black px-4 py-2 block">programme</a>
+        <a href="/infos#access" class="hover:text-black px-4 py-2 block"
+          >accès</a
+        >
+
+        <!-- Dropdown -->
+        <div class="relative">
+          <button
+            @click.stop="openDropdown = !openDropdown"
+            :aria-expanded="openDropdown.toString()"
+            class="flex items-center justify-between hover:text-black px-4 py-2 w-full text-left lg:w-auto block cursor-pointer"
+          >
+            <span>infos</span>
+            <span class="lg:hidden">▼</span>
+          </button>
+
+          <div
+            x-show="openDropdown"
+            x-transition:enter="transition ease-out duration-200"
+            x-transition:enter-start="opacity-0 scale-95"
+            x-transition:enter-end="opacity-100 scale-100"
+            x-transition:leave="transition ease-in duration-150"
+            x-transition:leave-start="opacity-100 scale-100"
+            x-transition:leave-end="opacity-0 scale-95"
+            class="mt-2 bg-[#FF6501] text-white min-w-[12rem] rounded lg:absolute lg:top-full lg:left-0"
+          >
+            <ul class="flex flex-col" role="menu">
+              <li>
+                <a
+                  href="/infos#oblo"
+                  class="block hover:text-black px-4 py-2"
+                  role="menuitem"
+                  >oblò ?</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/infos#benevoles"
+                  class="block hover:text-black px-4 py-2"
+                  role="menuitem"
+                  >bénévolat</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/infos#reservation"
+                  class="block hover:text-black px-4 py-2"
+                  role="menuitem"
+                  >réservation</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/infos#proposer-evenement"
+                  class="block hover:text-black px-4 py-2"
+                  role="menuitem"
+                  >proposer un événement</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/infos#louer-la-salle"
+                  class="block hover:text-black px-4 py-2"
+                  role="menuitem"
+                  >louer la salle</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/infos#donations"
+                  class="block hover:text-black px-4 py-2"
+                  role="menuitem"
+                  >donations</a
+                >
+              </li>
+              <li>
+                <a
+                  href="/infos#contact"
+                  class="block hover:text-black px-4 py-2"
+                  role="menuitem"
+                  >contact</a
+                >
+              </li>
+            </ul>
+          </div>
+        </div>
+        <a href="/archive" class="hover:text-black px-4 py-2 block"
+          >archive</a
+        >
+      </nav>
+    </div>
+  </header>
+
+  <main class="max-w-7xl mx-auto px-5 py-6">
+    {% block content %}{% endblock %}
+  </main>
+
+  <footer class="mt-12 text-white text-2xl font-custom">
+    <div class="max-w-7xl mx-auto px-5 py-3">
+      <nav
+        class="flex flex-col sm:flex-row sm:flex-wrap sm:justify-start gap-y-2 gap-x-6"
+      >
+        <!-- Public Links -->
+        <a
+          href="/newsletter"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-black"
+        >
+          newsletter
+        </a>
+        <a
+          href="https://facebook.com/cinemaoblo"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-black"
+        >
+          facebook
+        </a>
+        <a
+          href="https://instagram.com/cinemaoblo"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-black"
+        >
+          instagram
+        </a>
+        <a
+          href="https://t.me/+Cz_WhQxDKb8wNjE8"
+          target="_blank"
+          rel="noopener noreferrer"
+          class="hover:text-black"
+        >
+          telegram
+        </a>
+
+        {% if is_authenticated %}
+        <!-- Admin Links -->
+        <a
+          hx-post="/logout"
+          hx-target="body"
+          hx-swap="none"
+          hx-on="htmx:afterRequest:window.location.href = '/'"
+          class="cursor-pointer hover:text-black"
+        >
+          logout
+        </a>
+        <div>
+          <a
+            hx-get="/events/add"
+            hx-target="body"
+            hx-swap="outerHTML"
+            class="cursor-pointer hover:text-black"
+          >
+            ajouter un événement
+          </a>
+          <a
+            hx-get="/newsletter/new"
+            hx-target="body"
+            hx-swap="outerHTML"
+            class="cursor-pointer hover:text-black"
+          >
+            générer une newsletter
+          </a>
+        </div>
+        {% else %}
+        <a
+          hx-get="/login"
+          hx-target="body"
+          hx-swap="outerHTML"
+          class="cursor-pointer hover:text-black"
+        >
+          login
+        </a>
+        {% endif %}
+      </nav>
+    </div>
+  </footer>
+
+  <script>
+    var burgerButton = document.getElementById("burger-button");
+    var mobileMenu = document.getElementById("mobile-menu");
+
+    burgerButton.addEventListener("click", function () {
+      mobileMenu.classList.toggle("hidden");
+    });
+
+    document.addEventListener("click", function (event) {
+      if (
+        !burgerButton.contains(event.target) &&
+        !mobileMenu.contains(event.target)
+      ) {
+        mobileMenu.classList.add("hidden");
+      }
+    });
+  </script>
+</html>

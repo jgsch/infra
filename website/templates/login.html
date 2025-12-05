@@ -1,0 +1,62 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="font-custom max-w-md px px-4">
+  <form method="post" action="/login" class="space-y-4">
+    <div>
+      <label for="username" class="block text-white text-xl"
+        >nom d'utilisateur</label
+      >
+      <input
+        type="text"
+        id="username"
+        name="username"
+        required
+        class="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+      />
+    </div>
+
+    <div>
+      <label for="password" class="block font-medium text-white text-xl"
+        >mot de passe</label
+      >
+      <input
+        type="password"
+        id="password"
+        name="password"
+        required
+        class="w-full mt-1 px-4 py-2 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+      />
+    </div>
+
+    {% if error %}
+    <p
+      class="bg-red-100 text-red-700 border border-red-400 px-4 py-2 rounded-lg text-sm"
+    >
+      {{ error }}
+    </p>
+    {% endif %}
+
+    <button
+      type="submit"
+      class="w-full bg-[#1980cb] text-white font-medium pt-2 py-2 px-4 rounded-lg hover:bg-blue-600 transition-colors"
+    >
+      Se connecter
+    </button>
+  </form>
+
+  <div class="flex items-center text-white mt-6">
+    <div class="flex-grow border-t "></div>
+    <span class="mx-3 text-sm">ou</span>
+    <div class="flex-grow border-t "></div>
+  </div>
+
+    <a
+    href="/login/infomaniak"
+    class="mt-6 w-full inline-flex items-center justify-center gap-2 bg-white text-[#1980cb] font-medium py-2 px-4 rounded-lg hover:bg-white/90 transition-colors"
+  >
+    <span class="inline-block w-2.5 h-2.5 rounded-full bg-[#1980cb]"></span>
+    Se connecter avec Infomaniak
+  </a>
+</div>
+
+{% endblock %}

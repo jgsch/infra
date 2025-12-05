@@ -1,0 +1,15 @@
+jeandoute.dev {
+  reverse_proxy website:8000
+}
+
+vault.jeandoute.dev {
+  reverse_proxy vaultwarden:80
+}
+
+kb.jeandoute.dev {
+  reverse_proxy outline:3000
+}
+
+analytics.jeandoute.dev {
+  reverse_proxy umami:3000
+}

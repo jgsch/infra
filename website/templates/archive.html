@@ -1,0 +1,45 @@
+{% extends "base.html" %} {% block content %}
+
+<div class="font-custom text-white py-5 px-4 text-2xl">
+  <div class="tabs">
+    {% for year in years %}
+    <button
+      class="year-button"
+      hx-get="/archive/{{ year }}"
+      hx-target="#events"
+      hx-on="click: this.classList.add('text-black');
+                   this.parentNode.querySelectorAll('button').forEach(button => button !== this && button.classList.remove('text-black'));"
+    >
+      {{ year }}
+    </button>
+
+    {% endfor %}
+  </div>
+
+  <ul id="events" class="events-list font-custom text-white text-xl"></ul>
+</div>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const currentYear = new Date().getFullYear();
+    const buttons = document.querySelectorAll(".year-button");
+
+    function updateSelectedButton(clickedButton) {
+      buttons.forEach((button) => button.classList.remove("text-black"));
+      clickedButton.classList.add("text-black");
+    }
+
+    buttons.forEach((button) => {
+      const year = parseInt(button.textContent);
+      if (year === currentYear) {
+        button.classList.add("text-black");
+        htmx.ajax("GET", `/archive/${year}`, "#events");
+      }
+
+      button.addEventListener("click", function () {
+        updateSelectedButton(this);
+      });
+    });
+  });
+</script>
+{% endblock %}

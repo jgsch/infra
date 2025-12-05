@@ -1,0 +1,159 @@
+{% extends "base.html" %} {% block content %}
+
+<style>
+  .ql-container {
+    border: none !important;
+    padding: 0 !important;
+    padding-top: 10px !important;
+    padding-down: 10px !important;
+    bg: white;
+  }
+
+  .ql-editor {
+    border: none !important;
+    outline: none;
+    padding: 0 !important;
+    padding-top: 10px !important;
+  }
+
+  .ql-content a {
+    color: white;
+    text-decoration: underline;
+    transition: color 0.2s;
+  }
+
+  .ql-content a:hover {
+    color: black;
+  }
+
+  .ql-content ul {
+    list-style: disc;
+    padding-left: 1.5rem;
+    display: block;
+  }
+
+  iframe {
+    max-width: 100%;
+  }
+
+  @media screen and (max-width: 600px) {
+    iframe {
+      width: 100%;
+      height: auto;
+    }
+
+  }
+</style>
+
+<div class="ql-content block font-custom">
+  <div class="flex flex-col md:flex-row md:space-x-8 text-white text-xl">
+    <!-- LEFT COLUMN (Desktop only) -->
+    <div
+      class="hidden md:block md:basis-1/4 lg:basis-1/5 pl-4 font-bold text-right"
+    >
+      <div class="space-y-3">
+        <div>
+          <span>{{ day_name }}</span>
+          <span>{{ day_number }} {{ month }}</span>
+        </div>
+
+        <div>
+          <div>portes : {{ time_doors }}</div>
+          <div>début : {{ time_start }}</div>
+        </div>
+
+        <div>
+          <div>{{ price }}</div>
+        </div>
+
+        <div>
+          <div>{{ age }} ans +</div>
+        </div>
+
+        {% if trigger_warnings %}
+        <div>
+          <div>trigger warning</div>
+          {% for tw in trigger_warnings %}
+          <div class="blur-sm hover:blur-none">{{ tw }}</div>
+          {% endfor %}
+        </div>
+        {% endif %} {% if is_authenticated %}
+        <div>
+          <a
+            hx-get="/events/{{ datetime }}/edit"
+            hx-target="body"
+            hx-swap="outerHTML"
+            class="block cursor-pointer hover:text-black"
+            >éditer</a
+          >
+          <a
+            hx-delete="/events/{{ datetime }}"
+            hx-target="body"
+            hx-swap="none"
+            hx-on="htmx:afterRequest:window.location.href = '/'"
+            class="block cursor-pointer hover:text-black"
+            >supprimer</a
+          >
+        </div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- RIGHT COLUMN (Mobile full content stack + Desktop right column) -->
+    <div class="w-full text-left max-w-[600px]">
+      <div class="text-4xl md:text-7xl">{{ title }}</div>
+      <div class="text-2xl">{{ subtitle }}</div>
+
+      <!-- Technical Info (Visible only on mobile) -->
+      <div class="md:hidden font-bold text-left pt-4 px-2">
+        <div>
+          <div>{{ day_name }} {{ day_number }} {{ month }}</div>
+          <div>portes : {{ time_doors }} / début : {{ time_start }}</div>
+          <div>{{ price }}</div>
+          <div>{{ age }} ans +</div>
+        </div>
+
+        {% if trigger_warnings %}
+        <div class="pt-2">
+          <div>trigger warning</div>
+          {% for tw in trigger_warnings %}
+            <div
+              class="blur-sm cursor-pointer select-none"
+              onclick="this.classList.toggle('blur-sm')"
+              role="button"
+              aria-pressed="false"
+            >
+              {{ tw }}
+            </div>
+          {% endfor %}
+        </div>
+        {% endif %}
+        {% if is_authenticated %}
+        <div class="pt-4">
+          <a
+            hx-get="/events/{{ datetime }}/edit"
+            hx-target="body"
+            hx-swap="outerHTML"
+            class="block cursor-pointer hover:text-black"
+            >éditer</a
+          >
+          <a
+            hx-delete="/events/{{ datetime }}"
+            hx-target="body"
+            hx-swap="outerHTML"
+            class="block cursor-pointer hover:text-black"
+            >supprimer</a
+          >
+        </div>
+        {% endif %}
+      </div>
+
+      <!-- Description -->
+      <div id="description" class="text-xl md:text-2xl pt-4">
+        {{ description | safe }}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

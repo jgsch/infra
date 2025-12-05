@@ -1,0 +1,30 @@
+{% extends "base.html" %} {% block content %} {% if events %} {% for event in
+events %}
+<div class="block text-white font-custom">
+  <a
+    href="/events/{{ event.datetime }}"
+    class="flex flex-col md:flex-row justify-start md:space-x-8 py-5 hover:bg-[#1980cb] hover:bg-opacity-80 rounded cursor-pointer transition"
+  >
+    <div
+      class="pl-2 w-full md:w-1/4 text-left md:text-right text-xl mb-2 md:mb-0"
+    >
+      <div class="flex md:flex-col gap-x-2 md:gap-y-2 px-1">
+        <span>{{ event.day_name }}</span>
+        <span>{{ event.day_number }} {{ event.month }}</span>
+        <span>{{ event.time_start }}</span>
+      </div>
+    </div>
+    <div class="inline-block text-left basis-2/3 px-2">
+      <span class="block text-3xl md:text-7xl">{{ event.title }}</span>
+      <span class="block text-xl md:text-3xl md:px-1"
+        >{{ event.subtitle }}</span
+      >
+    </div>
+  </a>
+
+  {% endfor %} {% else %}
+  <div class="pl-4 py-10 text-white font-custom text-4xl">
+    Pas d'événement prévu
+  </div>
+  {% endif %} {% endblock %}
+</div>

@@ -1,0 +1,125 @@
+{% extends "base.html" %} {% block content %}
+
+<div
+  class="flex flex-col items-center justify-center"
+  style="position: relative; z-index: 1"
+>
+  <div class="px-40 font-custom text-white text-2xl max-w-[800px]">
+    <div>
+      <div id="oblo" class="text-5xl py-5 scroll-mt-20">Oblò ?</div>
+      <div>
+        Ouvert en novembre 2003 au cœur de la ville de Lausanne, le Cinéma Oblò
+        a pour but de présenter au plus large public possible, sur la base de
+        principes politiques et éthiques, des films sortant du circuit
+        commercial habituel : documentaires, courts métrages, films d’animation,
+        films expérimentaux, films à petit budget. Il entend par ailleurs donner
+        une place particulière aux films suisses, qui rencontrent souvent de la
+        difficulté à être diffusés.
+      </div>
+
+      <div class="pt-5 pb-60">
+        Le lieu a été aménagé par des bénévoles. Il occupe les locaux d'un
+        ancien entrepôt dont le loyer est payé par la ville de Lausanne (seule
+        subvention fixe que touche le cinéma). La salle est dotée de 50 sièges
+        de cinéma et de larges espaces peuvent également être mis à profit pour
+        des expositions. Un dégagement devant l'écran permet la tenue
+        d'événements musicaux, de pièce de thèatre ou d'événements de danse.
+      </div>
+    </div>
+
+    <div id="access" class="text-5xl md:pt-20 pb-5 scroll-mt-20">Accès ?</div>
+
+    <div>Cinéma Oblò</div>
+    <div>Avenue de france 9</div>
+    <div>1004 Lausanne</div>
+
+    <div class="pt-4 pb-80">
+      <div id="carousel" class="">
+        {% include "infos-access-carousel.html" %}
+      </div>
+    </div>
+
+    <div id="benevoles" class="text-5xl pt-20 pb-5 scroll-mt-20">
+      Bénévolat ?
+    </div>
+
+    <div>
+      Toutes les énergies sont les bienvenues pour faire vivre l'Oblò ! Au menu
+      : programmation artistique, projections, animation de soirées, bricolage
+      et d'interminables réunions !
+    </div>
+    <div class="pt-5">
+      Si vous êtes intéressé·e, venez-nous rencontrer lors d'une soirée ou d'une
+      séance du comité, on mord pas !
+    </div>
+    <div class="pt-5 pb-80">
+      Tu peux aussi nous contacter via mail à info@oblo.ch
+    </div>
+
+    <div id="proposer-evenement" class="text-5xl pt-20 pb-5 scroll-mt-20">
+      Proposer un événement ?
+    </div>
+    <div class="pt-5">
+      Vous souhaitez présenter une création artistique à l’Oblò, organiser un
+      débat, une soirée d’information ou de soutien ? C’est tout à fait possible
+      — mais avant de nous contacter, merci de lire ce
+      <a
+        href="/assets/event.pdf"
+        target="_blank"
+        class="text-black underline hover:text-[#1980cb]"
+        >document</a
+      >
+    </div>
+    <div class="pt-5">
+      Pour cela, il est nécessaire de devenir membre de l’association. La
+      cotisation annuelle est de 30.- CHF.
+    </div>
+
+    <div class="pt-5">
+      Il vous suffit d’effectuer un versement au compte suivant :
+    </div>
+    <div class="pt-5">CH89 0900 0000 1000 4851 5</div>
+    <div class="pt-5">Association Ciné-Clap</div>
+    <div>1004 Lausanne</div>
+    <div class="pt-5 pb-80">
+      N’oubliez pas de mentionner « cotisation de membre » ainsi que vos
+      coordonnées complètes.
+    </div>
+
+    <div id="reservation" class="text-5xl pt-20 pb-5 scroll-mt-20">
+      Réservation ?
+    </div>
+    <div class="pb-80">Nous ne prennons pas de réservation, venez tôt !</div>
+
+    <div id="louer-la-salle" class="text-5xl pt-20 pb-5 scroll-mt-20">
+      Louer la salle ?
+    </div>
+    <div class="pb-80">Nous ne louons pas la salle, désolé !</div>
+
+    <div id="donations" class="text-5xl pt-20 pb-5 scroll-mt-20">
+      Donations ?
+    </div>
+    <div>
+      Un don à une association faisant la promotion du cinéma indépendant
+      pourrait vous faire obtenir d'importantes ristournes sur vos impôts.
+      Alors, profitez...
+    </div>
+
+    <div class="pt-5">Association Ciné-Clap</div>
+    <div>1004 Lausanne</div>
+
+    <div class="pt-5">CH89 0900 0000 1000 4851 5</div>
+
+    <div class="pt-5 pb-80">♡ Merci ♡</div>
+
+    <div id="contact" class="text-5xl pt-20 pb-5 scroll-mt-20">Contact ?</div>
+    <div>info@oblo.ch</div>
+
+    <div class="pt-5 pb-80">
+      Il n’y a pas de relevé du courrier à l’adresse du cinéma et celui qui y
+      est envoyé disparaît dans un véritable trou noir.
+    </div>
+  </div>
+</div>
+
+{% endblock %}

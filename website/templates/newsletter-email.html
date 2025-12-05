@@ -1,0 +1,115 @@
+<!doctype html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Newsletter</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: rgb(255, 101, 1);
+        margin: 0;
+        padding: 20px;
+      }
+      .newsletter-container {
+        max-width: 600px;
+        margin: 40px auto;
+        padding: 20px;
+        background-color: white;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      }
+      .intro-title {
+        font-size: 32px;
+        font-weight: bold;
+        text-align: center;
+        margin-bottom: 10px;
+        border-bottom: 2px solid #ff6501;
+        padding-bottom: 10px;
+      }
+      .intro-text {
+        font-size: 16px;
+        text-align: center;
+        margin-bottom: 30px;
+        border-bottom: 2px solid #ff6501;
+        color: #333;
+      }
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+      td {
+        text-align: left;
+        padding: 20px;
+        border-bottom: 1px solid #ff6501;
+      }
+      .event-title {
+        font-size: 36px;
+        font-weight: bold;
+      }
+      .event-details {
+        font-size: 14px;
+        color: #555;
+      }
+      .footer {
+        text-align: center;
+        font-size: 14px;
+        color: #777;
+        margin-top: 20px;
+        padding-top: 20px;
+      }
+      .social-links a {
+        margin: 0 10px;
+        color: #ff6501;
+        text-decoration: none;
+      }
+      img {
+        max-width: 100%;
+        height: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="newsletter-container">
+      <div style="text-align: center">
+        <img
+          src="https://oblo.ch/assets/images/logo.avif"
+          alt="cinéma oblò banner"
+          style="width: 20%; max-width: 200px; height: auto"
+        />
+      </div>
+      <div class="intro-title">CINÉMA OBLÒ</div>
+      {% if introduction_text %}
+      <div class="intro-text">{{ introduction_text }}</div>
+      {% endif %}
+      <table>
+        <tbody>
+          {{ events }}
+        </tbody>
+      </table>
+      <div class="footer">
+        <div>cinéma oblò</div>
+        <div>avenue de france 9 1004 lausanne</div>
+        <div class="social-links">
+          <a href="https://www.oblo.ch">oblo.ch</a>
+          <a href="https://www.facebook.com/cinemaoblo">facebook</a>
+          <a href="https://www.instagram.com/cinemaoblo">instagram</a>
+          <a href="https://t.me/+JN2kDVXDpltjYmQ0">telegram</a>
+        </div>
+        <div>
+          <small
+            >Vous recevez cet e-mail car vous êtes inscrits sur notre liste de
+            diffusion. Cliquez
+            <a
+              onclick="window.open(this.href,'_blank');return false;"
+              href="*|UNSUBSCRIBED|*"
+              style="color: #000; text-decoration: underline"
+              >ici</a
+            >
+            pour vous désinscrire.</small
+          >
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

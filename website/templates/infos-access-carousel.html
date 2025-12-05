@@ -1,0 +1,25 @@
+<div class="relative w-80 z-0">
+  <img
+    src="{{ access }}"
+    class="w-full h-full object-cover rounded-lg shadow-lg"
+    alt="Carousel Image"
+  />
+
+  {% if index > 0 %}
+  <button
+    hx-get="/infos/access/{{ index }}/prev"
+    hx-target="#carousel"
+    class="absolute left-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full shadow bg-black hover:text-black hover:bg-white"
+  >
+    &#8592;
+  </button>
+  {% endif %} {% if index < 2 %}
+  <button
+    hx-get="/infos/access/{{ index }}/next"
+    hx-target="#carousel"
+    class="absolute right-2 top-1/2 transform -translate-y-1/2 p-2 rounded-full shadow bg-black hover:text-black hover:bg-white"
+  >
+    &#8594;
+  </button>
+  {% endif %}
+</div>

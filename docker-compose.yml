@@ -1,0 +1,172 @@
+services:
+  website:
+    image: oblo/website:latest
+    build:
+      context: website
+      dockerfile: ./Dockerfile
+    container_name: website
+    restart: unless-stopped
+    volumes:
+      - ./website/data/:/app/data
+    environment:
+     - WEBSITE_ADMIN_SECRET_KEY=${WEBSITE_ADMIN_SECRET_KEY}
+     - WEBSITE_INFOMANIAK_SSO_CLIENT_ID=${WEBSITE_INFOMANIAK_SSO_CLIENT_ID}
+     - WEBSITE_INFOMANIAK_SSO_CLIENT_SECRET=${WEBSITE_INFOMANIAK_SSO_CLIENT_SECRET}
+     - WEBSITE_INFOMANIAK_SSO_REDIRECT_URI=${WEBSITE_INFOMANIAK_SSO_REDIRECT_URI}
+     - BOT_TELEGRAM_HOST=${BOT_TELEGRAM_HOST}
+    networks:
+      - oblo
+    entrypoint: python src/main.py
+
+  #
+  # social networks bot
+  #
+
+  bot:
+    image: oblo/bot:latest
+    build:
+      context: bot
+      dockerfile: ./Dockerfile
+    container_name: bot
+    restart: unless-stopped
+    volumes:
+      - ./bot/data/:/app/data
+    environment:
+     - BOT_TELEGRAM_TOKEN=${BOT_TELEGRAM_TOKEN}
+     - BOT_TELEGRAM_GROUP_ID=${BOT_TELEGRAM_GROUP_ID}
+    networks:
+      - oblo
+    entrypoint: python src/main.py
+
+  #
+  # password manager
+  #
+
+  vaultwarden:
+    image: vaultwarden/server:testing
+    container_name: vaultwarden
+    restart: unless-stopped
+    volumes:
+     - ./vaultwarden/data:/data:rw
+    environment:
+     - ADMIN_TOKEN=${VAULTWARDEN_ADMIN_TOKEN}
+     - SIGNUPS_ALLOWED=false
+     - SIGNUPS_DOMAINS_WHITELIST=oblo.ch
+     - INVITATIONS_ALLOWED=true
+     - DOMAIN=${VAULTWARDEN_DOMAIN}
+     - SSO_ENABLED=true
+     - SSO_ONLY=true
+     - SSO_CLIENT_ID=${VAULTWARDEN_INFOMANIAK_SSO_CLIENT_ID}
+     - SSO_CLIENT_SECRET=${VAULTWARDEN_INFOMANIAK_SSO_CLIENT_SECRET}
+     - SSO_AUTHORITY=${VAULTWARDEN_INFOMANIAK_SSO_AUTHORITY}
+    networks:
+      - oblo
+
+  #
+  # database
+  #
+  #
+  
+  postgres:
+    image: postgres:18.1-alpine3.23
+    container_name: postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      # kb
+      OUTLINE_DB_NAME: ${OUTLINE_DB_NAME}
+      OUTLINE_DB_USERNAME: ${OUTLINE_DB_USERNAME}
+      OUTLINE_DB_PASSWORD: ${OUTLINE_DB_PASSWORD}
+      # analytics
+      UMAMI_DB_NAME: ${UMAMI_DB_NAME}
+      UMAMI_DB_USERNAME: ${UMAMI_DB_USERNAME}
+      UMAMI_DB_PASSWORD: ${UMAMI_DB_PASSWORD}
+    volumes:
+      - ./postgres/data:/var/lib/postgresql
+      - ./postgres/init:/docker-entrypoint-initdb.d:ro
+    restart: unless-stopped
+    networks:
+      - oblo
+    healthcheck:
+      test: ["CMD-SHELL", "sh -c 'pg_isready -U ${POSTGRES_USER}'"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+
+  #
+  # knownledge base
+  #
+
+  outline:
+    image: outlinewiki/outline:1.1.0
+    container_name: outline
+    depends_on:
+      postgres:
+        condition: service_healthy
+    user: root
+    environment:
+      URL: ${OUTLINE_URL}
+      NODE_ENV: production
+      PORT: 3000
+      SECRET_KEY: ${OUTLINE_SECRET_KEY}
+      UTILS_SECRET: ${OUTLINE_UTILS_SECRET}
+      DATABASE_URL: postgres://${OUTLINE_DB_USERNAME}:${OUTLINE_DB_PASSWORD}@postgres:5432/${OUTLINE_DB_NAME}
+      PGSSLMODE: disable
+      REDIS_URL: redis://redis:6379
+      FILE_STORAGE: local
+      FILE_STORAGE_LOCAL_ROOT_DIR: /var/lib/outline/data
+      FILE_STORAGE_UPLOAD_MAX_SIZE: 262144000
+      OIDC_ISSUER_URL: ${OUTLINE_INFOMANIAK_OIDC_ISSUER_URL}
+      OIDC_CLIENT_ID: ${OUTLINE_INFOMANIAK_OIDC_CLIENT_ID}
+      OIDC_CLIENT_SECRET: ${OUTLINE_INFOMANIAK_OIDC_CLIENT_SECRET}
+    volumes:
+      - ./outline/data:/var/lib/outline/data
+    restart: unless-stopped
+    networks:
+      - oblo
+
+  redis:
+    image: redis:7-alpine
+    container_name: redis
+    volumes:
+      - ./redis/data:/data
+    restart: unless-stopped
+    networks:
+      - oblo
+  #
+  # analytics
+  #
+
+  umami:
+    image: ghcr.io/umami-software/umami:postgresql-v2.20.1
+    container_name: umami
+    restart: unless-stopped
+    depends_on:
+      postgres:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgres://${UMAMI_DB_USERNAME}:${UMAMI_DB_PASSWORD}@postgres:5432/${UMAMI_DB_NAME}
+      APP_SECRET: ${UMAMI_ADMIN_PASSWORD}
+    networks:
+      - oblo
+
+  #
+  # reverse proxy
+  #
+
+  caddy:
+    image: caddy:2.10.2
+    container_name: caddy
+    restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./caddy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - ./caddy/data:/data
+      - ./caddy/config:/config
+    networks:
+      - oblo
+
+networks:
+  oblo:

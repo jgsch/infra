@@ -1,0 +1,11 @@
+.env
+bot/data/*
+caddy/data
+caddy/config
+outline/data
+redis/data
+umami/data
+vaultwarden/data
+website/data
+
+__pycache__

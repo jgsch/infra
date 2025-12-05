@@ -1,0 +1,90 @@
+{% extends "base.html" %} {% block content %}
+
+<form id="newsletter-form" class="px-4">
+  <label for="description" class="block text-white font-bold"
+    >texte d'introduction</label
+  >
+  <div
+    id="editor"
+    class="mt-1 block w-full rounded-md border border-gray-300 bg-white shadow-sm focus-within:ring-1 focus-within:ring-indigo-500 min-h-[150px]"
+  ></div>
+  <input type="hidden" name="description" id="description" />
+  <div class="font-custom text-white text-2xl grid grid-cols-1 gap-4 pt-4">
+    {% for event in events %}
+    <div class="flex items-center">
+      <input
+        type="checkbox"
+        id="event-{{ event.id }}"
+        name="selected_events"
+        value="{{ event.id }}"
+        class="mr-2"
+      />
+      <label for="event-{{ event.id }}"
+        >{{event.date}} ({{event.time_start}}) : {{ event.title }}</label
+      >
+    </div>
+    {% endfor %}
+  </div>
+  <div class="mt-4 flex gap-2">
+    <button type="submit" class="mt-4 bg-blue-500 text-white px-4 py-2 rounded">
+      générer
+    </button>
+    <button
+      type="button"
+      id="copy-button"
+      class="mt-4 bg-blue-500 text-white px-4 py-2 rounded hidden"
+    >
+      copier
+    </button>
+  </div>
+</form>
+<div id="newsletter-box" class="mt-6 px-4 rounded-md"></div>
+
+<script>
+  var editor = new Quill("#editor", {
+    theme: "snow",
+    modules: {
+      toolbar: {
+        container: [
+          ["bold", "italic", "underline"],
+          ["link"],
+          [{ list: "bullet" }],
+        ],
+      },
+    },
+  });
+
+  document
+    .getElementById("newsletter-form")
+    .addEventListener("submit", function (e) {
+      e.preventDefault();
+      document.getElementById("description").value = editor.root.innerHTML;
+      htmx.ajax("POST", "/newsletter/generate", {
+        target: "#newsletter-box",
+        swap: "innerHTML",
+        source: "#newsletter-form",
+      });
+      document.getElementById("copy-button").classList.remove("hidden");
+    });
+
+  function htmlUnescape(str) {
+    const temp = document.createElement("textarea");
+    temp.innerHTML = str;
+    return temp.value;
+  }
+
+  document.getElementById("copy-button").addEventListener("click", function () {
+    const textarea = document.querySelector("#newsletter-box textarea");
+    if (!textarea) return;
+
+    const unescaped = htmlUnescape(textarea.value);
+
+    // Use clipboard API instead of execCommand
+    navigator.clipboard.writeText(unescaped).then(() => {
+      this.textContent = "copié !";
+      setTimeout(() => (this.textContent = "copier"), 2000);
+    });
+  });
+</script>
+
+{% endblock %}
